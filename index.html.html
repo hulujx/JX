@@ -1,0 +1,398 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+#app{display:flex;min-height:600px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-lg);overflow:hidden;background:var(--color-background-primary)}
+#sidebar{width:200px;flex-shrink:0;background:var(--color-background-secondary);border-right:0.5px solid var(--color-border-tertiary);display:flex;flex-direction:column;padding:0}
+.sb-header{padding:16px 16px 12px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.sb-logo{font-size:13px;font-weight:500;color:var(--color-text-primary);display:flex;align-items:center;gap:7px}
+.sb-logo i{font-size:18px;color:#7F77DD}
+.sb-section{padding:12px 8px 4px;font-size:11px;color:var(--color-text-tertiary);letter-spacing:.06em;text-transform:uppercase;font-weight:500}
+.sb-item{display:flex;align-items:center;gap:9px;padding:8px 12px;margin:1px 4px;border-radius:var(--border-radius-md);cursor:pointer;font-size:13px;color:var(--color-text-secondary);border:none;background:transparent;width:calc(100% - 8px);text-align:left}
+.sb-item i{font-size:17px;flex-shrink:0}
+.sb-item:hover{background:var(--color-background-primary);color:var(--color-text-primary)}
+.sb-item.active{background:var(--color-background-primary);color:var(--color-text-primary);font-weight:500}
+.sb-item .badge{margin-left:auto;font-size:11px;background:var(--color-border-tertiary);color:var(--color-text-secondary);padding:1px 7px;border-radius:20px;min-width:20px;text-align:center}
+.sb-item.active .badge{background:#EEEDFE;color:#3C3489}
+.sb-footer{margin-top:auto;padding:12px 8px}
+#main{flex:1;display:flex;flex-direction:column;min-width:0}
+#topbar{display:flex;align-items:center;gap:10px;padding:14px 20px;border-bottom:0.5px solid var(--color-border-tertiary);background:var(--color-background-primary)}
+#page-title{font-size:16px;font-weight:500;color:var(--color-text-primary);flex:1}
+.search-wrap{position:relative}
+.search-wrap i{position:absolute;left:9px;top:50%;transform:translateY(-50%);font-size:14px;color:var(--color-text-tertiary);pointer-events:none}
+.search-wrap input{padding-left:30px;width:190px;font-size:13px}
+.top-add-btn{display:flex;align-items:center;gap:5px;padding:7px 14px;font-size:13px;cursor:pointer;border-radius:var(--border-radius-md);background:#534AB7;color:#fff;border:none;font-weight:500;white-space:nowrap}
+.top-add-btn:hover{background:#3C3489}
+#content{padding:20px;flex:1}
+.filter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.chip{font-size:12px;padding:4px 12px;border-radius:20px;border:0.5px solid var(--color-border-secondary);background:transparent;cursor:pointer;color:var(--color-text-secondary)}
+.chip:hover:not(.active){background:var(--color-background-secondary);color:var(--color-text-primary)}
+.chip.active{background:#534AB7;color:#fff;border-color:#534AB7}
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px 16px;transition:border-color .15s}
+.card:hover{border-color:var(--color-border-secondary)}
+.card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
+.card-left{display:flex;align-items:center;gap:10px}
+.avatar{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;flex-shrink:0}
+.card-name{font-size:14px;font-weight:500;color:var(--color-text-primary);line-height:1.3}
+.card-role{font-size:12px;color:var(--color-text-secondary);margin-top:1px}
+.card-actions{display:flex;gap:2px;opacity:0;transition:opacity .15s}
+.card:hover .card-actions{opacity:1}
+.icon-btn{background:transparent;border:none;cursor:pointer;color:var(--color-text-tertiary);padding:4px 5px;border-radius:6px;font-size:15px;display:flex;align-items:center}
+.icon-btn:hover{background:var(--color-background-secondary);color:var(--color-text-primary)}
+.card-meta{display:flex;flex-direction:column;gap:3px;margin-top:8px}
+.meta-row{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--color-text-secondary)}
+.meta-row i{font-size:13px;flex-shrink:0;color:var(--color-text-tertiary)}
+.card-footer{margin-top:10px;padding-top:10px;border-top:0.5px solid var(--color-border-tertiary);display:flex;gap:5px;flex-wrap:wrap}
+.pill{font-size:11px;padding:2px 9px;border-radius:20px;display:inline-flex;align-items:center;gap:4px}
+.area-strip{height:3px;border-radius:0 0 var(--border-radius-lg) var(--border-radius-lg);margin:-14px -16px 12px;border-radius:0}
+.pass-hidden{letter-spacing:.12em;font-size:11px;color:var(--color-text-tertiary)}
+.stat-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+.stat-box{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px 14px;border:0.5px solid var(--color-border-tertiary)}
+.stat-n{font-size:24px;font-weight:500;color:var(--color-text-primary);line-height:1}
+.stat-l{font-size:11px;color:var(--color-text-secondary);margin-top:4px;display:flex;align-items:center;gap:4px}
+.empty-state{text-align:center;padding:3rem 1rem;color:var(--color-text-tertiary)}
+.empty-state i{font-size:32px;display:block;margin:0 auto 10px;color:var(--color-border-secondary)}
+.empty-state p{font-size:14px}
+.modal-wrap{display:none;position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.4);border-radius:var(--border-radius-lg);align-items:flex-start;justify-content:center;padding-top:40px;z-index:20}
+.modal-wrap.open{display:flex}
+.modal{background:var(--color-background-primary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-lg);padding:20px;width:380px;max-width:94%}
+.modal-title{font-size:15px;font-weight:500;color:var(--color-text-primary);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.field{margin-bottom:11px}
+.field label{display:block;font-size:12px;color:var(--color-text-secondary);margin-bottom:4px;font-weight:500}
+.field input,.field select,.field textarea{width:100%;font-size:13px}
+.field textarea{height:56px;resize:vertical}
+.modal-btns{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+.btn-cancel{background:transparent;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:7px 16px;font-size:13px;cursor:pointer;color:var(--color-text-primary)}
+.btn-save{background:#534AB7;color:#fff;border:none;border-radius:var(--border-radius-md);padding:7px 20px;font-size:13px;cursor:pointer;font-weight:500}
+.btn-save:hover{background:#3C3489}
+.area-dot{width:9px;height:9px;border-radius:50%;display:inline-block;flex-shrink:0}
+</style>
+
+<div style="position:relative;padding:1rem 0">
+<h2 class="sr-only">Kişisel yönetim paneli</h2>
+<div id="app">
+  <div id="sidebar">
+    <div class="sb-header">
+      <div class="sb-logo"><i class="ti ti-layout-dashboard" aria-hidden="true"></i>Panelim</div>
+    </div>
+    <div class="sb-section">Genel</div>
+    <button class="sb-item active" id="nav-areas" onclick="gotoTab('areas',this)"><i class="ti ti-layout-grid" aria-hidden="true"></i>Alanlar<span class="badge" id="b-areas">0</span></button>
+    <div class="sb-section">Kayıtlar</div>
+    <button class="sb-item" id="nav-identities" onclick="gotoTab('identities',this)"><i class="ti ti-id-badge" aria-hidden="true"></i>Kimliklerim<span class="badge" id="b-ids">0</span></button>
+    <button class="sb-item" id="nav-people" onclick="gotoTab('people',this)"><i class="ti ti-users" aria-hidden="true"></i>Kişiler<span class="badge" id="b-ppl">0</span></button>
+    <button class="sb-item" id="nav-accounts" onclick="gotoTab('accounts',this)"><i class="ti ti-lock" aria-hidden="true"></i>Hesaplar<span class="badge" id="b-acc">0</span></button>
+    <div class="sb-footer">
+      <div style="font-size:11px;color:var(--color-text-tertiary);padding:4px 8px">Veriler cihazında saklanır</div>
+    </div>
+  </div>
+
+  <div id="main">
+    <div id="topbar">
+      <span id="page-title">Alanlar</span>
+      <div class="search-wrap"><i class="ti ti-search" aria-hidden="true"></i><input type="text" placeholder="Ara..." id="search-input" oninput="onSearch()"></div>
+      <button class="top-add-btn" id="add-btn" onclick="openModal()"><i class="ti ti-plus" aria-hidden="true" style="font-size:15px"></i>Ekle</button>
+    </div>
+    <div id="content">
+      <div class="stat-strip">
+        <div class="stat-box"><div class="stat-n" id="st-areas">0</div><div class="stat-l"><i class="ti ti-layout-grid" aria-hidden="true"></i>Alan</div></div>
+        <div class="stat-box"><div class="stat-n" id="st-ids">0</div><div class="stat-l"><i class="ti ti-id-badge" aria-hidden="true"></i>Kimlik</div></div>
+        <div class="stat-box"><div class="stat-n" id="st-ppl">0</div><div class="stat-l"><i class="ti ti-users" aria-hidden="true"></i>Kişi</div></div>
+        <div class="stat-box"><div class="stat-n" id="st-acc">0</div><div class="stat-l"><i class="ti ti-lock" aria-hidden="true"></i>Hesap</div></div>
+      </div>
+      <div id="filter-row" class="filter-row"></div>
+      <div id="cards-container" class="cards-grid"></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-wrap" id="modal-wrap">
+  <div class="modal">
+    <div class="modal-title" id="modal-title"><i class="ti ti-plus" aria-hidden="true"></i><span id="modal-title-text">Yeni alan</span></div>
+    <div id="modal-body"></div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal()">İptal</button>
+      <button class="btn-save" onclick="saveItem()">Kaydet</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+const CHex={purple:'#7F77DD',teal:'#1D9E75',amber:'#EF9F27',coral:'#D85A30',blue:'#378ADD',green:'#639922',pink:'#D4537E'};
+const CLt={purple:'#EEEDFE',teal:'#E1F5EE',amber:'#FAEEDA',coral:'#FAECE7',blue:'#E6F1FB',green:'#EAF3DE',pink:'#FBEAF0'};
+const CTxt={purple:'#3C3489',teal:'#085041',amber:'#633806',coral:'#712B13',blue:'#0C447C',green:'#27500A',pink:'#72243E'};
+const COLORS=Object.keys(CHex);
+
+let S={areas:[],identities:[],people:[],accounts:[]};
+let tab='areas',filterArea=null,editId=null,searchQ='';
+
+async function load(){try{const r=await window.storage.get('pnl3');if(r&&r.value)S=JSON.parse(r.value);}catch(e){}render();}
+async function save(){try{await window.storage.set('pnl3',JSON.stringify(S));}catch(e){};}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,5);}
+function esc(s){const d=document.createElement('div');d.textContent=s||'';return d.innerHTML;}
+function ini(n){return(n||'').split(' ').map(w=>w[0]||'').slice(0,2).join('').toUpperCase();}
+function aColor(id){const a=S.areas.find(x=>x.id===id);return a?a.color:'gray';}
+function aName(id){const a=S.areas.find(x=>x.id===id);return a?a.name:'';}
+
+function render(){
+  updateBadges();updateStats();renderFilters();renderCards();
+}
+function updateBadges(){
+  document.getElementById('b-areas').textContent=S.areas.length;
+  document.getElementById('b-ids').textContent=S.identities.length;
+  document.getElementById('b-ppl').textContent=S.people.length;
+  document.getElementById('b-acc').textContent=S.accounts.length;
+}
+function updateStats(){
+  document.getElementById('st-areas').textContent=S.areas.length;
+  document.getElementById('st-ids').textContent=S.identities.length;
+  document.getElementById('st-ppl').textContent=S.people.length;
+  document.getElementById('st-acc').textContent=S.accounts.length;
+}
+
+function renderFilters(){
+  const fr=document.getElementById('filter-row');
+  if(tab==='areas'){fr.innerHTML='';return;}
+  let h=`<button class="chip${filterArea===null?' active':''}" onclick="setFilter(null)">Tümü</button>`;
+  S.areas.forEach(a=>{
+    h+=`<button class="chip${filterArea===a.id?' active':''}" onclick="setFilter('${a.id}')"><span class="area-dot" style="background:${CHex[a.color]||'#888'}"></span> ${esc(a.name)}</button>`;
+  });
+  fr.innerHTML=h;
+}
+
+function setFilter(id){filterArea=id;renderFilters();renderCards();}
+function onSearch(){searchQ=document.getElementById('search-input').value.toLowerCase();renderCards();}
+
+function gotoTab(t,btn){
+  tab=t;filterArea=null;searchQ='';
+  document.getElementById('search-input').value='';
+  document.querySelectorAll('.sb-item').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const titles={areas:'Alanlar',identities:'Kimliklerim',people:'Kişiler',accounts:'Hesaplar'};
+  document.getElementById('page-title').textContent=titles[t];
+  render();
+}
+
+function getList(){
+  const map={areas:S.areas,identities:S.identities,people:S.people,accounts:S.accounts};
+  let list=map[tab];
+  if(filterArea&&tab!=='areas')list=list.filter(x=>x.area===filterArea);
+  if(searchQ)list=list.filter(x=>JSON.stringify(x).toLowerCase().includes(searchQ));
+  return list;
+}
+
+function pill(text,color){
+  const c=color||'gray';
+  const bg=CLt[c]||'#F1EFE8',tx=CTxt[c]||'#444441';
+  return`<span class="pill" style="background:${bg};color:${tx}">${esc(text)}</span>`;
+}
+
+function renderCards(){
+  const el=document.getElementById('cards-container');
+  const list=getList();
+  if(!list.length){
+    const msgs={areas:'Henüz alan eklenmedi',identities:'Henüz kimlik eklenmedi',people:'Henüz kişi eklenmedi',accounts:'Henüz hesap eklenmedi'};
+    el.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><i class="ti ti-inbox" aria-hidden="true"></i><p>${msgs[tab]}</p></div>`;
+    return;
+  }
+  if(tab==='areas'){el.innerHTML=list.map(areaCard).join('');return;}
+  if(tab==='identities'){el.innerHTML=list.map(identityCard).join('');return;}
+  if(tab==='people'){el.innerHTML=list.map(personCard).join('');return;}
+  if(tab==='accounts'){el.innerHTML=list.map(accountCard).join('');return;}
+}
+
+function areaCard(a){
+  const ic=S.identities.filter(x=>x.area===a.id).length;
+  const pc=S.people.filter(x=>x.area===a.id).length;
+  const ac=S.accounts.filter(x=>x.area===a.id).length;
+  const projs=(a.projects||'').split(',').filter(p=>p.trim());
+  const c=a.color||'purple';
+  return`<div class="card">
+    <div style="height:4px;background:${CHex[c]||'#888'};margin:-14px -16px 12px;border-radius:var(--border-radius-lg) var(--border-radius-lg) 0 0"></div>
+    <div class="card-top">
+      <div class="card-left">
+        <div class="avatar" style="background:${CLt[c]||'#eee'};color:${CHex[c]||'#888'};border-radius:10px"><i class="ti ti-layout-grid" aria-hidden="true" style="font-size:18px"></i></div>
+        <div><div class="card-name">${esc(a.name)}</div><div class="card-role">${esc(a.sector||'')}</div></div>
+      </div>
+      <div class="card-actions">
+        <button class="icon-btn" onclick="openModal('${a.id}')" aria-label="Düzenle"><i class="ti ti-edit" aria-hidden="true"></i></button>
+        <button class="icon-btn" onclick="del('areas','${a.id}')" aria-label="Sil"><i class="ti ti-trash" aria-hidden="true"></i></button>
+      </div>
+    </div>
+    ${a.note?`<div class="meta-row" style="margin-bottom:6px"><i class="ti ti-note" aria-hidden="true"></i>${esc(a.note)}</div>`:''}
+    ${projs.length?`<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px">${projs.map(p=>pill(p,c)).join('')}</div>`:''}
+    <div class="card-footer">
+      <span class="pill" style="background:var(--color-background-secondary);color:var(--color-text-secondary)"><i class="ti ti-id-badge" aria-hidden="true" style="font-size:12px"></i>${ic} kimlik</span>
+      <span class="pill" style="background:var(--color-background-secondary);color:var(--color-text-secondary)"><i class="ti ti-users" aria-hidden="true" style="font-size:12px"></i>${pc} kişi</span>
+      <span class="pill" style="background:var(--color-background-secondary);color:var(--color-text-secondary)"><i class="ti ti-lock" aria-hidden="true" style="font-size:12px"></i>${ac} hesap</span>
+    </div>
+  </div>`;
+}
+
+function identityCard(id){
+  const c=aColor(id.area);const an=aName(id.area);
+  return`<div class="card">
+    <div class="card-top">
+      <div class="card-left">
+        <div class="avatar" style="background:${CLt[c]||'#F1EFE8'};color:${CTxt[c]||'#444'}">${ini(id.name)}</div>
+        <div><div class="card-name">${esc(id.name)}</div><div class="card-role">${esc(id.role||'')}</div></div>
+      </div>
+      <div class="card-actions">
+        <button class="icon-btn" onclick="openModal('${id.id}')" aria-label="Düzenle"><i class="ti ti-edit" aria-hidden="true"></i></button>
+        <button class="icon-btn" onclick="del('identities','${id.id}')" aria-label="Sil"><i class="ti ti-trash" aria-hidden="true"></i></button>
+      </div>
+    </div>
+    <div class="card-meta">
+      ${id.email?`<div class="meta-row"><i class="ti ti-mail" aria-hidden="true"></i>${esc(id.email)}</div>`:''}
+      ${id.phone?`<div class="meta-row"><i class="ti ti-phone" aria-hidden="true"></i>${esc(id.phone)}</div>`:''}
+      ${id.note?`<div class="meta-row"><i class="ti ti-note" aria-hidden="true"></i>${esc(id.note)}</div>`:''}
+    </div>
+    <div class="card-footer">
+      ${an?`<span class="pill" style="background:${CLt[c]||'#eee'};color:${CTxt[c]||'#444'}"><span class="area-dot" style="background:${CHex[c]||'#888'}"></span>${esc(an)}</span>`:''}
+    </div>
+  </div>`;
+}
+
+function personCard(p){
+  const c=aColor(p.area);const an=aName(p.area);
+  const idn=S.identities.find(i=>i.id===p.identity);
+  const tags=(p.tags||'').split(',').filter(t=>t.trim());
+  return`<div class="card">
+    <div class="card-top">
+      <div class="card-left">
+        <div class="avatar" style="background:${CLt[c]||'#F1EFE8'};color:${CTxt[c]||'#444'}">${ini(p.name)}</div>
+        <div><div class="card-name">${esc(p.name)}</div><div class="card-role">${esc(p.job||'')}${p.company?' · '+esc(p.company):''}</div></div>
+      </div>
+      <div class="card-actions">
+        <button class="icon-btn" onclick="openModal('${p.id}')" aria-label="Düzenle"><i class="ti ti-edit" aria-hidden="true"></i></button>
+        <button class="icon-btn" onclick="del('people','${p.id}')" aria-label="Sil"><i class="ti ti-trash" aria-hidden="true"></i></button>
+      </div>
+    </div>
+    <div class="card-meta">
+      ${p.phone?`<div class="meta-row"><i class="ti ti-phone" aria-hidden="true"></i>${esc(p.phone)}</div>`:''}
+      ${p.email?`<div class="meta-row"><i class="ti ti-mail" aria-hidden="true"></i>${esc(p.email)}</div>`:''}
+      ${p.note?`<div class="meta-row"><i class="ti ti-note" aria-hidden="true"></i>${esc(p.note)}</div>`:''}
+    </div>
+    <div class="card-footer">
+      ${an?`<span class="pill" style="background:${CLt[c]||'#eee'};color:${CTxt[c]||'#444'}"><span class="area-dot" style="background:${CHex[c]||'#888'}"></span>${esc(an)}</span>`:''}
+      ${idn?`<span class="pill" style="background:var(--color-background-secondary);color:var(--color-text-secondary)">${esc(idn.name)}</span>`:''}
+      ${tags.map(t=>`<span class="pill" style="background:var(--color-background-secondary);color:var(--color-text-secondary)">${esc(t)}</span>`).join('')}
+    </div>
+  </div>`;
+}
+
+function accountCard(a){
+  const c=aColor(a.area);const an=aName(a.area);
+  const idn=S.identities.find(i=>i.id===a.identity);
+  return`<div class="card">
+    <div class="card-top">
+      <div class="card-left">
+        <div class="avatar" style="background:${CLt[c]||'#F1EFE8'};color:${CTxt[c]||'#444'};border-radius:10px"><i class="ti ti-world" aria-hidden="true" style="font-size:18px"></i></div>
+        <div><div class="card-name">${esc(a.platform)}</div><div class="card-role">${esc(a.username||'')}</div></div>
+      </div>
+      <div class="card-actions">
+        <button class="icon-btn" onclick="togglePw('${a.id}')" aria-label="Şifreyi göster"><i class="ti ti-eye" aria-hidden="true"></i></button>
+        <button class="icon-btn" onclick="copyPw('${a.id}')" aria-label="Kopyala"><i class="ti ti-copy" aria-hidden="true"></i></button>
+        <button class="icon-btn" onclick="openModal('${a.id}')" aria-label="Düzenle"><i class="ti ti-edit" aria-hidden="true"></i></button>
+        <button class="icon-btn" onclick="del('accounts','${a.id}')" aria-label="Sil"><i class="ti ti-trash" aria-hidden="true"></i></button>
+      </div>
+    </div>
+    <div class="card-meta">
+      <div class="meta-row"><i class="ti ti-key" aria-hidden="true"></i><span class="pass-hidden" id="pw-${a.id}">••••••••</span></div>
+      ${a.note?`<div class="meta-row"><i class="ti ti-note" aria-hidden="true"></i>${esc(a.note)}</div>`:''}
+    </div>
+    <div class="card-footer">
+      ${an?`<span class="pill" style="background:${CLt[c]||'#eee'};color:${CTxt[c]||'#444'}"><span class="area-dot" style="background:${CHex[c]||'#888'}"></span>${esc(an)}</span>`:''}
+      ${idn?`<span class="pill" style="background:var(--color-background-secondary);color:var(--color-text-secondary)">${esc(idn.name)}</span>`:''}
+    </div>
+  </div>`;
+}
+
+function togglePw(id){
+  const a=S.accounts.find(x=>x.id===id);if(!a)return;
+  const el=document.getElementById('pw-'+id);if(!el)return;
+  const showing=el.style.letterSpacing!=='.12em'&&el.textContent!=='••••••••';
+  if(!showing||el.textContent==='••••••••'){el.textContent=a.password||'(boş)';el.style.letterSpacing='normal';el.style.fontSize='12px';el.style.color='var(--color-text-primary)';}
+  else{el.textContent='••••••••';el.style.letterSpacing='.12em';el.style.fontSize='11px';el.style.color='var(--color-text-tertiary)';}
+}
+function copyPw(id){const a=S.accounts.find(x=>x.id===id);if(a&&a.password)navigator.clipboard.writeText(a.password).catch(()=>{});}
+
+function del(arr,id){if(!confirm('Sil?'))return;S[arr]=S[arr].filter(x=>x.id!==id);save();render();}
+
+function areaOpts(sel){return'<option value="">— alan seçme —</option>'+S.areas.map(a=>`<option value="${a.id}"${a.id===sel?' selected':''}>${esc(a.name)}</option>`).join('');}
+function idOpts(sel){return'<option value="">— seçme —</option>'+S.identities.map(i=>`<option value="${i.id}"${i.id===sel?' selected':''}>${esc(i.name)}</option>`).join('');}
+function colorOpts(sel){return COLORS.map(c=>`<option value="${c}"${c===sel?' selected':''}>${c}</option>`).join('');}
+
+function openModal(id=null){
+  editId=id;
+  let ex={};
+  if(id){const arrMap={areas:'areas',identities:'identities',people:'people',accounts:'accounts'};ex=S[arrMap[tab]].find(x=>x.id===id)||{};}
+  const labels={areas:'Alan',identities:'Kimlik',people:'Kişi',accounts:'Hesap'};
+  document.getElementById('modal-title-text').textContent=(id?'Düzenle — ':('Yeni '))+labels[tab];
+  let f='';
+  if(tab==='areas'){
+    f=`<div class="field"><label>Alan adı *</label><input id="f-name" value="${esc(ex.name||'')}" placeholder="örn: Call Center"></div>
+    <div class="field"><label>Sektör / açıklama</label><input id="f-sector" value="${esc(ex.sector||'')}" placeholder="örn: Canlı Destek"></div>
+    <div class="field"><label>Projeler (virgülle)</label><input id="f-projects" value="${esc(ex.projects||'')}" placeholder="örn: Teknik, Satış"></div>
+    <div class="field"><label>Renk</label><select id="f-color">${colorOpts(ex.color||'purple')}</select></div>
+    <div class="field"><label>Not</label><textarea id="f-note">${esc(ex.note||'')}</textarea></div>`;
+  }else if(tab==='identities'){
+    f=`<div class="field"><label>İsim / takma ad *</label><input id="f-name" value="${esc(ex.name||'')}"></div>
+    <div class="field"><label>Rol / unvan</label><input id="f-role" value="${esc(ex.role||'')}"></div>
+    <div class="field"><label>Alan</label><select id="f-area">${areaOpts(ex.area||'')}</select></div>
+    <div class="field"><label>E-posta</label><input id="f-email" type="email" value="${esc(ex.email||'')}"></div>
+    <div class="field"><label>Telefon</label><input id="f-phone" value="${esc(ex.phone||'')}"></div>
+    <div class="field"><label>Not</label><textarea id="f-note">${esc(ex.note||'')}</textarea></div>`;
+  }else if(tab==='people'){
+    f=`<div class="field"><label>İsim *</label><input id="f-name" value="${esc(ex.name||'')}"></div>
+    <div class="field"><label>Meslek</label><input id="f-job" value="${esc(ex.job||'')}"></div>
+    <div class="field"><label>Şirket</label><input id="f-company" value="${esc(ex.company||'')}"></div>
+    <div class="field"><label>Alan</label><select id="f-area">${areaOpts(ex.area||'')}</select></div>
+    <div class="field"><label>Kimliğinle tanıştı?</label><select id="f-identity">${idOpts(ex.identity||'')}</select></div>
+    <div class="field"><label>Telefon</label><input id="f-phone" value="${esc(ex.phone||'')}"></div>
+    <div class="field"><label>E-posta</label><input id="f-email" type="email" value="${esc(ex.email||'')}"></div>
+    <div class="field"><label>Etiketler (virgülle)</label><input id="f-tags" value="${esc(ex.tags||'')}"></div>
+    <div class="field"><label>Not</label><textarea id="f-note">${esc(ex.note||'')}</textarea></div>`;
+  }else if(tab==='accounts'){
+    f=`<div class="field"><label>Platform *</label><input id="f-platform" value="${esc(ex.platform||'')}"></div>
+    <div class="field"><label>Kullanıcı adı / e-posta</label><input id="f-username" value="${esc(ex.username||'')}"></div>
+    <div class="field"><label>Şifre</label><input id="f-password" type="password" value="${esc(ex.password||'')}"></div>
+    <div class="field"><label>Alan</label><select id="f-area">${areaOpts(ex.area||'')}</select></div>
+    <div class="field"><label>Kimlik</label><select id="f-identity">${idOpts(ex.identity||'')}</select></div>
+    <div class="field"><label>Not</label><textarea id="f-note">${esc(ex.note||'')}</textarea></div>`;
+  }
+  document.getElementById('modal-body').innerHTML=f;
+  const mw=document.getElementById('modal-wrap');
+  mw.style.minHeight=(document.getElementById('app').offsetHeight||600)+'px';
+  mw.classList.add('open');
+  setTimeout(()=>{const el=document.getElementById('f-name')||document.getElementById('f-platform');if(el)el.focus();},60);
+}
+
+function closeModal(){document.getElementById('modal-wrap').classList.remove('open');editId=null;}
+
+function g(id){const el=document.getElementById(id);return el?el.value.trim():'';}
+
+function saveItem(){
+  if(tab==='areas'){
+    const name=g('f-name');if(!name)return;
+    const obj={id:editId||uid(),name,sector:g('f-sector'),projects:g('f-projects'),color:g('f-color')||'purple',note:g('f-note')};
+    if(editId){const i=S.areas.findIndex(x=>x.id===editId);S.areas[i]=obj;}else S.areas.push(obj);
+  }else if(tab==='identities'){
+    const name=g('f-name');if(!name)return;
+    const obj={id:editId||uid(),name,role:g('f-role'),area:g('f-area'),email:g('f-email'),phone:g('f-phone'),note:g('f-note')};
+    if(editId){const i=S.identities.findIndex(x=>x.id===editId);S.identities[i]=obj;}else S.identities.push(obj);
+  }else if(tab==='people'){
+    const name=g('f-name');if(!name)return;
+    const obj={id:editId||uid(),name,job:g('f-job'),company:g('f-company'),area:g('f-area'),identity:g('f-identity'),phone:g('f-phone'),email:g('f-email'),tags:g('f-tags'),note:g('f-note')};
+    if(editId){const i=S.people.findIndex(x=>x.id===editId);S.people[i]=obj;}else S.people.push(obj);
+  }else if(tab==='accounts'){
+    const platform=g('f-platform');if(!platform)return;
+    const obj={id:editId||uid(),platform,username:g('f-username'),password:g('f-password'),area:g('f-area'),identity:g('f-identity'),note:g('f-note')};
+    if(editId){const i=S.accounts.findIndex(x=>x.id===editId);S.accounts[i]=obj;}else S.accounts.push(obj);
+  }
+  save();closeModal();render();
+}
+
+load();
+</script>
